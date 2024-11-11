@@ -14,7 +14,11 @@ export default function App() {
       <StatusBar style="auto" />
       <NavigationContainer>
         <AppStack.Navigator>
-          <AppStack.Screen name="Home" component={HomeScreen} />
+          <AppStack.Screen
+            name="Home"
+            component={HomeScreen}
+            options={{ headerShown: false }}
+          />
           <AppStack.Screen name="SetNew" component={TimerSetupScreen} />
         </AppStack.Navigator>
       </NavigationContainer>

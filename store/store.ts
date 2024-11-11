@@ -1,5 +1,6 @@
 import { observable } from "@legendapp/state";
 import { type Timer, type iStatus } from "../types";
+import { timersFakeData } from "../assets/fakedata";
 
 interface Store {
   timers: Timer[];
@@ -100,7 +101,8 @@ function getTimeRemaining(id: number): number {
 }
 
 const store$ = observable<Store>({
-  timers: [],
+  // timers: [],
+  timers: timersFakeData,
   addTimer,
   editTimer,
   playPauseTimer,
