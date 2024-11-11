@@ -10,6 +10,7 @@ import {
 } from "react-native";
 import { observer } from "@legendapp/state/react";
 import store$ from "../store/store";
+import TimerCard from "../components/TimerCard";
 
 const HomeScreen = () => {
   const timers = store$.timers.get();
@@ -19,14 +20,21 @@ const HomeScreen = () => {
       <FlatList
         data={timers}
         renderItem={({ item }) => (
-          <View>
-            <Text>label: {item.label}</Text>
-            <Text>duration: {item.duration}</Text>
-            <Text>startTime: {item.startTime.toLocaleTimeString()}</Text>
-            <Text>remainingTime: {item.remainingTime}</Text>
-            <Text>status: {item.status}</Text>
-            <Text>endTime: {item.endTime.toLocaleTimeString()}</Text>
-          </View>
+          // <View>
+          //   <Text>label: {item.label}</Text>
+          //   <Text>duration: {item.duration}</Text>
+          //   <Text>startTime: {item.startTime.toLocaleTimeString()}</Text>
+          //   <Text>remainingTime: {item.remainingTime}</Text>
+          //   <Text>status: {item.status}</Text>
+          //   <Text>endTime: {item.endTime.toLocaleTimeString()}</Text>
+          // </View>
+          <TimerCard
+            label={item.label}
+            duration={item.duration}
+            endTime={item.endTime}
+            status={item.status}
+            remainingTime={item.remainingTime || undefined}
+          />
         )}
       />
     </SafeAreaView>

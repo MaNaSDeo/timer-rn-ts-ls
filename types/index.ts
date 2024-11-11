@@ -5,7 +5,7 @@ export type Timer = {
   endTime: Date; // Expected end time (will change when paused/resumed)
   duration: number; // Total duration in seconds
   remainingTime?: number; // Time left when paused
-  status?: iStatus;
+  status: iStatus;
   pausedAt?: Date; // When was it paused last
 };
 
