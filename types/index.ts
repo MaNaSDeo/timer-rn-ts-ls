@@ -21,3 +21,8 @@ export type Timer = {
  */
 
 export type iStatus = "running" | "paused" | "completed";
+
+export type AppStackParamList = {
+  Home: undefined;
+  SetNew: undefined;
+};

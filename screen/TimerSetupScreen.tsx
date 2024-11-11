@@ -1,11 +1,8 @@
-import React from 'react'
-import {Text} from 'react-native'
+import React from "react";
+import { Text } from "react-native";
 
-const TimerScreen = () => {
-  
-  return (
-    <Text>TimerScreen</Text>
-  )
-}
+const TimerSetupScreen = () => {
+  return <Text>TimerSetupScreen</Text>;
+};
 
-export default TimerScreen
+export default TimerSetupScreen;
