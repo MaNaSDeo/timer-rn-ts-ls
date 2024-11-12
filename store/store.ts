@@ -75,7 +75,7 @@ function playPauseTimer(id: number, newStatus: iStatus) {
               pausedAt: now,
             };
           }
-          break;
+          return timer;
         }
         case "running": {
           // Resume from pause - calculate new end time based on remaining time
@@ -88,20 +88,13 @@ function playPauseTimer(id: number, newStatus: iStatus) {
               remainingTime: undefined,
             };
           }
+          return timer;
         }
-        case "completed": {
-          // Mark as completed and clear temporary states
-          return {
-            ...timer,
-            status: "completed",
-            remainingTime: 0,
-            pausedAt: undefined,
-          };
-        }
+        default:
+          return timer;
       }
       // If no valid transition found, return unchanged timer
-      console.warn(`Invalid timer transition: ${timer.status} -> ${newStatus}`);
-      return timer;
+      // console.warn(`Invalid timer transition: ${timer.status} -> ${newStatus}`);
     });
   });
 }

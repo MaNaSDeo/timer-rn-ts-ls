@@ -19,6 +19,7 @@ const useTimerCountdown = (
     if (status === "paused") {
       setTimeLeft(remainingTime || 0);
       setIsCompleted(false);
+      return;
     }
 
     // For running timer, calculate from endTime

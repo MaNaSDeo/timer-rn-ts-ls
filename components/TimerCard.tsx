@@ -36,12 +36,24 @@ const TimerCard: FC<Props> = ({
     .find((task) => task.id === id)?.status;
 
   useEffect(() => {
-    if (status === "paused") setIconName("pause");
-    else if (status === "completed" || completedStatus) {
-      setIconName("checkmark");
-      store$.timerCompleted(id);
-    } else setIconName("play");
-  }, [status, endTime, completedStatus]);
+    if (!currentStatus) return;
+
+    switch (currentStatus) {
+      case "paused":
+        setIconName("play");
+        break;
+      case "running":
+        setIconName("pause");
+        break;
+      case "completed":
+        setIconName("checkmark");
+        break;
+    }
+  }, [status, id, completedStatus]);
+
+  useEffect(() => {
+    if (completedStatus) store$.timerCompleted(id);
+  }, [completedStatus]);
 
   const formatedTime = useMemo(() => {
     const hours = Math.floor(timeLeft / 3600);
@@ -77,9 +89,12 @@ const TimerCard: FC<Props> = ({
   }, [duration]);
 
   function handlePlayPause() {
-    if (currentStatus === "running") store$.playPauseTimer(id, "paused");
-    if (currentStatus === "paused") store$.playPauseTimer(id, "running");
-    // console.log(store$.timers.peek().find((task) => task.id === id));
+    if (!currentStatus) return;
+
+    const newStatus: iStatus =
+      currentStatus === "running" ? "paused" : "running";
+
+    store$.playPauseTimer(id, newStatus);
   }
 
   return (
