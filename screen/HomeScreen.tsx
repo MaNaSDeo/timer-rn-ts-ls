@@ -19,6 +19,7 @@ const HomeScreen = () => {
         data={timers}
         renderItem={({ item }) => (
           <TimerCard
+            id={item.id}
             label={item.label}
             duration={item.duration}
             endTime={item.endTime}

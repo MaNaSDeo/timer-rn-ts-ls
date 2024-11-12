@@ -58,31 +58,50 @@ function playPauseTimer(id: number, newStatus: iStatus) {
    * Will call again when the the timer will end and update the the staus as 'completed'
    */
   const now = new Date();
-  store$.timers.set((prev) => {
-    return prev.map((timer) => {
-      let newRemainingTime = timer.remainingTime;
-      let newPauseAt = timer.pausedAt;
-      let newEndTime = timer.endTime;
+  store$.timers.set((prevTimers) => {
+    return prevTimers.map((timer) => {
+      if (timer.id !== id) return timer;
 
-      if (timer.id === id) {
-        if (newStatus === "paused") {
-          newRemainingTime = Math.floor(
-            timer.endTime.getTime() - now.getTime()
-          );
-          newPauseAt = now;
-        } else if (newStatus === "running" && timer.remainingTime) {
-          newEndTime = new Date(now.getTime() + timer.remainingTime * 1000);
-          newPauseAt = undefined;
+      // Handle different status transitions
+      switch (newStatus) {
+        case "paused": {
+          // Calculate remaining time only if timer was running
+          if (timer.status === "running") {
+            const remainingMS = timer.endTime.getTime() - now.getTime();
+            return {
+              ...timer,
+              status: "paused",
+              remainingTime: Math.max(0, Math.floor(remainingMS / 1000)),
+              pausedAt: now,
+            };
+          }
+          break;
         }
-
-        return {
-          ...timer,
-          status: newStatus,
-          remainingTime: newRemainingTime,
-          pausedAt: newPauseAt,
-          endTime: newEndTime,
-        };
-      } else return timer;
+        case "running": {
+          // Resume from pause - calculate new end time based on remaining time
+          if (timer.status === "paused" && timer.remainingTime) {
+            return {
+              ...timer,
+              status: "running",
+              endTime: new Date(now.getTime() + timer.remainingTime * 1000),
+              pausedAt: undefined,
+              remainingTime: undefined,
+            };
+          }
+        }
+        case "completed": {
+          // Mark as completed and clear temporary states
+          return {
+            ...timer,
+            status: "completed",
+            remainingTime: 0,
+            pausedAt: undefined,
+          };
+        }
+      }
+      // If no valid transition found, return unchanged timer
+      console.warn(`Invalid timer transition: ${timer.status} -> ${newStatus}`);
+      return timer;
     });
   });
 }
@@ -105,7 +124,11 @@ function getTimeRemaining(id: number): number {
 }
 
 function timerCompleted(id: number) {
-  console.log("timerCompleted");
+  store$.timers.set((prev) => {
+    return prev.map((task) => {
+      return task.id === id ? { ...task, status: "completed" } : task;
+    });
+  });
 }
 
 const store$ = observable<Store>({

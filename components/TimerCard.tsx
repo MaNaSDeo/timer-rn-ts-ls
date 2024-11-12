@@ -7,6 +7,7 @@ import { observer } from "@legendapp/state/react";
 import store$ from "../store/store";
 
 interface Props {
+  id: number;
   label: string | undefined;
   endTime: Date;
   status: iStatus;
@@ -15,6 +16,7 @@ interface Props {
 }
 
 const TimerCard: FC<Props> = ({
+  id,
   label,
   endTime,
   status,
@@ -29,12 +31,16 @@ const TimerCard: FC<Props> = ({
     status,
     remainingTime
   );
+  const currentStatus = store$.timers
+    .peek()
+    .find((task) => task.id === id)?.status;
 
   useEffect(() => {
     if (status === "paused") setIconName("pause");
-    else if (status === "completed" || completedStatus)
+    else if (status === "completed" || completedStatus) {
       setIconName("checkmark");
-    else setIconName("play");
+      store$.timerCompleted(id);
+    } else setIconName("play");
   }, [status, endTime, completedStatus]);
 
   const formatedTime = useMemo(() => {
@@ -70,6 +76,12 @@ const TimerCard: FC<Props> = ({
     }
   }, [duration]);
 
+  function handlePlayPause() {
+    if (currentStatus === "running") store$.playPauseTimer(id, "paused");
+    if (currentStatus === "paused") store$.playPauseTimer(id, "running");
+    // console.log(store$.timers.peek().find((task) => task.id === id));
+  }
+
   return (
     <View style={styles.container}>
       <View style={styles.timerContainer}>
@@ -78,8 +90,18 @@ const TimerCard: FC<Props> = ({
           {label ? label : totalDuration}
         </Text>
       </View>
-      <Pressable style={styles.button}>
-        <Ionicons name={iconName} size={30} color="#f5b84e" />
+      <Pressable
+        style={[
+          styles.button,
+          iconName === "checkmark" ? styles.completedBtn : null,
+        ]}
+        onPress={handlePlayPause}
+      >
+        <Ionicons
+          name={iconName}
+          size={30}
+          color={iconName === "checkmark" ? "#02fa07" : "#f5b84e"}
+        />
       </Pressable>
     </View>
   );
@@ -122,5 +144,9 @@ const styles = StyleSheet.create({
     borderWidth: 3,
     borderRadius: 30,
     borderColor: "#f5b84e",
+  },
+  completedBtn: {
+    backgroundColor: "#065207",
+    borderColor: "#000",
   },
 });
