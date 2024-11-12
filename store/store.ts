@@ -57,7 +57,9 @@ function playPauseTimer(id: number, newStatus: iStatus) {
    * Will call this whenever the start or pause button is pressed, and will update pausedAt.
    * Will call again when the the timer will end and update the the staus as 'completed'
    */
+  console.log("store", { newStatus, id });
   const now = new Date();
+
   store$.timers.set((prevTimers) => {
     return prevTimers.map((timer) => {
       if (timer.id !== id) return timer;
@@ -66,6 +68,7 @@ function playPauseTimer(id: number, newStatus: iStatus) {
       switch (newStatus) {
         case "paused": {
           // Calculate remaining time only if timer was running
+          console.log("status inside switch case: pause -> ", timer.status);
           if (timer.status === "running") {
             const remainingMS = timer.endTime.getTime() - now.getTime();
             return {
@@ -75,10 +78,12 @@ function playPauseTimer(id: number, newStatus: iStatus) {
               pausedAt: now,
             };
           }
-          break;
+          // break;
+          return timer;
         }
         case "running": {
           // Resume from pause - calculate new end time based on remaining time
+          console.log("status inside switch case: running -> ", timer.status);
           if (timer.status === "paused" && timer.remainingTime) {
             return {
               ...timer,
@@ -88,20 +93,14 @@ function playPauseTimer(id: number, newStatus: iStatus) {
               remainingTime: undefined,
             };
           }
+          return timer;
         }
-        case "completed": {
-          // Mark as completed and clear temporary states
-          return {
-            ...timer,
-            status: "completed",
-            remainingTime: 0,
-            pausedAt: undefined,
-          };
-        }
+        default:
+          return timer;
       }
       // If no valid transition found, return unchanged timer
-      console.warn(`Invalid timer transition: ${timer.status} -> ${newStatus}`);
-      return timer;
+      // console.warn(`Invalid timer transition: ${timer.status} -> ${newStatus}`);
+      // return timer;
     });
   });
 }
@@ -119,7 +118,7 @@ function getTimeRemaining(id: number): number {
   if (timer.status === "completed") return 0;
   if (timer.status === "paused") return timer.remainingTime || 0;
 
-  const remaining = Math.floor((timer.endTime.getTime() - Date.now()) / 1000);
+  const remaining = Math.floor((timer.endTime!.getTime() - Date.now()) / 1000);
   return Math.max(0, remaining);
 }
 

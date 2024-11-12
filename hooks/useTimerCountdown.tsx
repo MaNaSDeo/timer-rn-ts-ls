@@ -10,15 +10,18 @@ const useTimerCountdown = (
   const [isCompleted, setIsCompleted] = useState<boolean>(false);
 
   useEffect(() => {
+    // Handle completed state
     if (status === "completed") {
       setTimeLeft(0);
       setIsCompleted(true);
       return;
     }
 
+    // Handle paused state
     if (status === "paused") {
       setTimeLeft(remainingTime || 0);
       setIsCompleted(false);
+      return;
     }
 
     // For running timer, calculate from endTime

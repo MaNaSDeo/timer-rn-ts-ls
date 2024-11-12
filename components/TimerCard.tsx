@@ -8,40 +8,61 @@ import store$ from "../store/store";
 
 interface Props {
   id: number;
-  label: string | undefined;
-  endTime: Date;
-  status: iStatus;
-  duration: number;
-  remainingTime?: number;
 }
 
-const TimerCard: FC<Props> = ({
-  id,
-  label,
-  endTime,
-  status,
-  duration,
-  remainingTime,
-}) => {
+const TimerCard: FC<Props> = ({ id }) => {
   const [iconName, setIconName] = useState<"play" | "pause" | "checkmark">(
     "play"
   );
+
+  const timer = store$.timers.peek().find((task) => task.id === id);
+  if (!timer) return <Text>Empty</Text>;
+  const { label, startTime, endTime, status, duration, remainingTime } = timer;
+
+  if (id === 11) {
+    console.log({
+      status,
+    });
+  }
   const { timeLeft, completedStatus } = useTimerCountdown(
     endTime,
     status,
     remainingTime
   );
-  const currentStatus = store$.timers
-    .peek()
-    .find((task) => task.id === id)?.status;
+  if (id === 11) {
+    console.log({
+      timeLeft,
+      remainingTime,
+      startTime,
+      endTime,
+      duration,
+      status,
+    });
+  }
 
   useEffect(() => {
-    if (status === "paused") setIconName("pause");
-    else if (status === "completed" || completedStatus) {
-      setIconName("checkmark");
-      store$.timerCompleted(id);
-    } else setIconName("play");
-  }, [status, endTime, completedStatus]);
+    const currentStatus = store$.timers
+      .peek()
+      .find((task) => task.id === id)?.status;
+
+    if (!currentStatus) return;
+
+    switch (currentStatus) {
+      case "paused":
+        setIconName("pause");
+        break;
+      case "running":
+        setIconName("play");
+        break;
+      case "completed":
+        setIconName("checkmark");
+        break;
+    }
+  }, [status, id]);
+
+  useEffect(() => {
+    if (completedStatus) store$.timerCompleted(id);
+  }, [completedStatus, id]);
 
   const formatedTime = useMemo(() => {
     const hours = Math.floor(timeLeft / 3600);
@@ -77,9 +98,15 @@ const TimerCard: FC<Props> = ({
   }, [duration]);
 
   function handlePlayPause() {
-    if (currentStatus === "running") store$.playPauseTimer(id, "paused");
-    if (currentStatus === "paused") store$.playPauseTimer(id, "running");
-    // console.log(store$.timers.peek().find((task) => task.id === id));
+    const currentStatus = store$.timers
+      .peek()
+      .find((task) => task.id === id)?.status;
+
+    if (!status) return;
+
+    const newStatus: iStatus =
+      currentStatus === "running" ? "paused" : "running";
+    store$.playPauseTimer(id, newStatus);
   }
 
   return (

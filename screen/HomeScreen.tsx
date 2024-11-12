@@ -17,16 +17,7 @@ const HomeScreen = () => {
     <SafeAreaView style={styles.AndriodSafeArea}>
       <FlatList
         data={timers}
-        renderItem={({ item }) => (
-          <TimerCard
-            id={item.id}
-            label={item.label}
-            duration={item.duration}
-            endTime={item.endTime}
-            status={item.status}
-            remainingTime={item.remainingTime || undefined}
-          />
-        )}
+        renderItem={({ item }) => <TimerCard id={item.id} />}
         keyExtractor={(item) => item.id.toString()}
       />
     </SafeAreaView>
