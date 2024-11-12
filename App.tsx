@@ -11,7 +11,7 @@ const AppStack = createStackNavigator<AppStackParamList>();
 export default function App() {
   return (
     <>
-      <StatusBar style="auto" />
+      <StatusBar style="light" />
       <NavigationContainer>
         <AppStack.Navigator>
           <AppStack.Screen

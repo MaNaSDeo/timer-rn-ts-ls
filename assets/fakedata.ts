@@ -26,10 +26,10 @@ export const timersFakeData: Timer[] = [
     id: 13,
     label: "Reading",
     startTime: new Date(now.getTime() - 30 * 60 * 1000), // Started 30 minutes ago
-    endTime: new Date(now.getTime() + 5 * 60 * 1000), // Ends in 5 minutes
+    endTime: new Date(now.getTime() + 10 * 1000), // Ends in 5 minutes
     duration: 1800, // 30 minutes
     remainingTime: 300, // 5 minutes left when paused
-    status: "paused" as iStatus,
+    status: "running" as iStatus,
     pausedAt: new Date(now.getTime() - 5 * 60 * 1000), // Paused 5 minutes ago
   },
   {
@@ -50,7 +50,6 @@ export const timersFakeData: Timer[] = [
     remainingTime: 0, // No time left (completed)
     status: "completed" as iStatus,
   },
-
   {
     id: 1,
     label: "Workout",
@@ -90,6 +89,53 @@ export const timersFakeData: Timer[] = [
   },
   {
     id: 5,
+    label: "",
+    startTime: new Date("2024-11-10T15:00:00"),
+    endTime: new Date("2024-11-10T15:10:00"),
+    // duration: 600, // 10 minutes
+    duration: 14401,
+    remainingTime: 0, // No time left (completed)
+    status: "completed" as iStatus,
+  },
+  {
+    id: 21,
+    label: "Workout",
+    startTime: new Date("2024-11-10T08:00:00"),
+    endTime: new Date("2024-11-10T08:30:00"),
+    duration: 1800, // 30 minutes
+    remainingTime: 600, // 10 minutes left when paused
+    status: "paused" as iStatus,
+    pausedAt: new Date("2024-11-10T08:20:00"),
+  },
+  {
+    id: 22,
+    label: "Study",
+    startTime: new Date("2024-11-10T10:00:00"),
+    endTime: new Date("2024-11-10T12:00:00"),
+    duration: 7200, // 2 hours
+    remainingTime: 0, // Completed
+    status: "completed" as iStatus,
+  },
+  {
+    id: 23,
+    label: "Reading",
+    startTime: new Date("2024-11-10T13:00:00"),
+    endTime: new Date("2024-11-10T13:30:00"),
+    duration: 1800, // 30 minutes
+    remainingTime: 300, // 5 minutes left when paused
+    status: "paused" as iStatus,
+    pausedAt: new Date("2024-11-10T13:25:00"),
+  },
+  {
+    id: 24,
+    label: "Meditation",
+    startTime: new Date("2024-11-10T14:00:00"),
+    endTime: new Date("2024-11-10T14:15:00"),
+    duration: 900, // 15 minutes
+    status: "running" as iStatus,
+  },
+  {
+    id: 25,
     label: "",
     startTime: new Date("2024-11-10T15:00:00"),
     endTime: new Date("2024-11-10T15:10:00"),

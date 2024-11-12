@@ -7,6 +7,7 @@ interface Store {
   addTimer: (timer: Omit<Timer, "id" | "endTime" | "status">) => void;
   editTimer: (timer: Timer) => void;
   playPauseTimer: (id: number, status: iStatus) => void;
+  timerCompleted: (id: number) => void;
   deleteTimer: (id: number) => void;
   getTimeRemaining: (id: number) => number;
 }
@@ -49,6 +50,7 @@ function editTimer(updatedTimer: Timer) {
     });
   });
 }
+
 function playPauseTimer(id: number, newStatus: iStatus) {
   /**
    * Can play pause or even declare the task as completed.
@@ -84,10 +86,12 @@ function playPauseTimer(id: number, newStatus: iStatus) {
     });
   });
 }
+
 function deleteTimer(id: number) {
   // Will find the timer with just the id and will filter it out.
   store$.timers.set((prev) => prev.filter((task) => task.id !== id));
 }
+
 function getTimeRemaining(id: number): number {
   const timer: Timer | undefined = store$.timers
     .peek()
@@ -100,6 +104,10 @@ function getTimeRemaining(id: number): number {
   return Math.max(0, remaining);
 }
 
+function timerCompleted(id: number) {
+  console.log("timerCompleted");
+}
+
 const store$ = observable<Store>({
   // timers: [],
   timers: timersFakeData,
@@ -108,6 +116,7 @@ const store$ = observable<Store>({
   playPauseTimer,
   deleteTimer,
   getTimeRemaining,
+  timerCompleted,
 });
 
 export default store$;

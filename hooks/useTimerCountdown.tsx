@@ -7,21 +7,26 @@ const useTimerCountdown = (
   remainingTime?: number
 ) => {
   const [timeLeft, setTimeLeft] = useState<number>(0);
+  const [isCompleted, setIsCompleted] = useState<boolean>(false);
 
   useEffect(() => {
     if (status === "completed") {
       setTimeLeft(0);
+      setIsCompleted(true);
       return;
     }
 
     if (status === "paused") {
       setTimeLeft(remainingTime || 0);
+      setIsCompleted(false);
     }
 
     // For running timer, calculate from endTime
     const updateTimeLeft = () => {
       const remaining = Math.floor((endTime.getTime() - Date.now()) / 1000);
-      setTimeLeft(Math.max(0, remaining));
+      const newTimeLeft = Math.max(0, remaining);
+      setTimeLeft(newTimeLeft);
+      if (remaining <= 0) setIsCompleted(true);
     };
 
     //Initial value
@@ -32,7 +37,9 @@ const useTimerCountdown = (
       return () => clearInterval(interval);
     }
   }, [status, endTime, remainingTime]);
-  return timeLeft;
+  return { timeLeft, completedStatus: isCompleted };
 };
 
 export default useTimerCountdown;
+
+//Flashlist

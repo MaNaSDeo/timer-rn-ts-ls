@@ -1,7 +1,5 @@
 import React from "react";
 import {
-  Text,
-  View,
   FlatList,
   SafeAreaView,
   StyleSheet,
@@ -20,14 +18,6 @@ const HomeScreen = () => {
       <FlatList
         data={timers}
         renderItem={({ item }) => (
-          // <View>
-          //   <Text>label: {item.label}</Text>
-          //   <Text>duration: {item.duration}</Text>
-          //   <Text>startTime: {item.startTime.toLocaleTimeString()}</Text>
-          //   <Text>remainingTime: {item.remainingTime}</Text>
-          //   <Text>status: {item.status}</Text>
-          //   <Text>endTime: {item.endTime.toLocaleTimeString()}</Text>
-          // </View>
           <TimerCard
             label={item.label}
             duration={item.duration}
@@ -36,6 +26,7 @@ const HomeScreen = () => {
             remainingTime={item.remainingTime || undefined}
           />
         )}
+        keyExtractor={(item) => item.id.toString()}
       />
     </SafeAreaView>
   );
@@ -46,7 +37,7 @@ export default observer(HomeScreen);
 const styles = StyleSheet.create({
   AndriodSafeArea: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: "#000",
     paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
   },
 });

@@ -1,8 +1,10 @@
-import React, { FC, useMemo } from "react";
+import React, { FC, useEffect, useMemo, useState } from "react";
 import { Pressable, Text, View, StyleSheet } from "react-native";
 import { type iStatus } from "../types";
 import { Ionicons } from "@expo/vector-icons";
 import useTimerCountdown from "../hooks/useTimerCountdown";
+import { observer } from "@legendapp/state/react";
+import store$ from "../store/store";
 
 interface Props {
   label: string | undefined;
@@ -19,19 +21,36 @@ const TimerCard: FC<Props> = ({
   duration,
   remainingTime,
 }) => {
-  let iconName: "play" | "pause" | "checkmark" = "play";
-  if (status === "paused") iconName = "pause";
-  if (status === "completed") iconName = "checkmark";
-  const timeLeft = useTimerCountdown(endTime, status, remainingTime);
+  const [iconName, setIconName] = useState<"play" | "pause" | "checkmark">(
+    "play"
+  );
+  const { timeLeft, completedStatus } = useTimerCountdown(
+    endTime,
+    status,
+    remainingTime
+  );
+
+  useEffect(() => {
+    if (status === "paused") setIconName("pause");
+    else if (status === "completed" || completedStatus)
+      setIconName("checkmark");
+    else setIconName("play");
+  }, [status, endTime, completedStatus]);
 
   const formatedTime = useMemo(() => {
     const hours = Math.floor(timeLeft / 3600);
     const minutes = Math.floor((timeLeft % 3600) / 60);
     const seconds = timeLeft % 60;
 
-    return `${hours.toString().padStart(2, "0")}:${minutes
-      .toString()
-      .padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
+    if (hours) {
+      return `${hours.toString().padStart(2, "0")}:${minutes
+        .toString()
+        .padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
+    } else {
+      return `${minutes.toString().padStart(2, "0")}:${seconds
+        .toString()
+        .padStart(2, "0")}`;
+    }
   }, [timeLeft]);
 
   const totalDuration = useMemo(() => {
@@ -53,25 +72,55 @@ const TimerCard: FC<Props> = ({
 
   return (
     <View style={styles.container}>
-      <View>
-        {/* <Text>{endTime.toLocaleTimeString()}</Text> */}
-        <Text>{formatedTime}</Text>
-        <Text>{label ? label : totalDuration}</Text>
+      <View style={styles.timerContainer}>
+        <Text style={styles.timerText}>{formatedTime}</Text>
+        <Text style={styles.labelDuration}>
+          {label ? label : totalDuration}
+        </Text>
       </View>
-      <Pressable>
-        <Ionicons name={iconName} size={24} color="black" />
+      <Pressable style={styles.button}>
+        <Ionicons name={iconName} size={30} color="#f5b84e" />
       </Pressable>
     </View>
   );
 };
 
-export default TimerCard;
+export default observer(TimerCard);
 
 const styles = StyleSheet.create({
   container: {
     width: "100%",
-    height: 50,
+    height: 92,
     flexDirection: "row",
     justifyContent: "space-between",
+    alignItems: "center",
+    paddingHorizontal: 12,
+    paddingVertical: 0,
+    borderWidth: 1,
+    borderColor: "#1a1919",
+    backgroundColor: "#000",
+  },
+  timerContainer: {
+    flex: 1,
+  },
+  timerText: {
+    fontSize: 48,
+    fontWeight: "300",
+    color: "#fff",
+    marginBottom: 0,
+  },
+  labelDuration: {
+    fontWeight: "bold",
+    color: "#fff",
+    marginTop: 0,
+  },
+  button: {
+    width: 60,
+    height: 60,
+    justifyContent: "center",
+    alignItems: "center",
+    borderWidth: 3,
+    borderRadius: 30,
+    borderColor: "#f5b84e",
   },
 });
