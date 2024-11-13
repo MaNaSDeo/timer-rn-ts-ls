@@ -8,7 +8,7 @@ interface Store {
   editTimer: (timer: Timer) => void;
   playPauseTimer: (id: number, status: iStatus) => void;
   timerCompleted: (id: number) => void;
-  deleteTimer: (id: number) => void;
+  deleteTimer: (ids: number[]) => void;
   getTimeRemaining: (id: number) => number;
 }
 
@@ -108,9 +108,10 @@ function playPauseTimer(id: number, newStatus: iStatus) {
   });
 }
 
-function deleteTimer(id: number) {
+function deleteTimer(ids: number[]) {
   // Will find the timer with just the id and will filter it out.
-  store$.timers.set((prev) => prev.filter((task) => task.id !== id));
+  // store$.timers.set((prev) => prev.filter((task) => task.id !== id));
+  console.log("ids", ids);
 }
 
 function getTimeRemaining(id: number): number {

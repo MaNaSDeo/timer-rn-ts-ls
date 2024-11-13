@@ -13,6 +13,7 @@ interface Props {
   status: iStatus;
   duration: number;
   remainingTime?: number;
+  isEditable: boolean;
 }
 
 const TimerCard: FC<Props> = ({
@@ -22,6 +23,7 @@ const TimerCard: FC<Props> = ({
   status,
   duration,
   remainingTime,
+  isEditable,
 }) => {
   const [iconName, setIconName] = useState<"play" | "pause">("play");
   const { timeLeft, completedStatus } = useTimerCountdown(
@@ -103,6 +105,15 @@ const TimerCard: FC<Props> = ({
 
   return (
     <View style={styles.container}>
+      {isEditable ? (
+        <View style={styles.editBtnContainer}>
+          <Pressable style={styles.editButton}>
+            <Ionicons name="remove" color={"white"} size={18} />
+          </Pressable>
+        </View>
+      ) : (
+        <></>
+      )}
       <View style={styles.timerContainer}>
         <Text style={styles.timerText}>{formatedTime}</Text>
         <Text style={styles.labelDuration}>
@@ -168,5 +179,18 @@ const styles = StyleSheet.create({
     borderWidth: 0,
     backgroundColor: "#065207",
     borderColor: "#000",
+  },
+  editBtnContainer: {
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  editButton: {
+    backgroundColor: "red",
+    width: 20,
+    aspectRatio: 1 / 1,
+    borderRadius: 11,
+    alignItems: "center",
+    justifyContent: "center",
+    marginRight: 12,
   },
 });

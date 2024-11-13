@@ -11,9 +11,10 @@ interface Props {
   data: TimerCardData[];
   title: string;
   titleType: "heading" | "normal";
+  isEditable: boolean;
 }
 
-const TimerList: FC<Props> = ({ data, title, titleType }) => {
+const TimerList: FC<Props> = ({ data, title, titleType, isEditable }) => {
   return (
     <View style={styles.container}>
       <Text
@@ -34,6 +35,7 @@ const TimerList: FC<Props> = ({ data, title, titleType }) => {
             endTime={item.endTime}
             status={item.status}
             remainingTime={item.remainingTime || undefined}
+            isEditable={isEditable}
           />
         )}
         keyExtractor={(item) => item.id.toString()}

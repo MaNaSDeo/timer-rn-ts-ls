@@ -1,4 +1,4 @@
-import React, { FC } from "react";
+import React, { FC, useState } from "react";
 import {
   SafeAreaView,
   StyleSheet,
@@ -18,6 +18,7 @@ import { type AppStackParamList } from "../types";
 type Props = StackScreenProps<AppStackParamList, "Home">;
 
 const HomeScreen: FC<Props> = ({ navigation }) => {
+  const [isEditable, setIsEditable] = useState<boolean>(false);
   const timers = store$.timers.get();
 
   const running = timers.filter((task) => task.status === "running");
@@ -25,7 +26,7 @@ const HomeScreen: FC<Props> = ({ navigation }) => {
   const completed = timers.filter((task) => task.status === "completed");
 
   function handleEdit() {
-    console.log("handleEdit Clicked");
+    setIsEditable((prev) => !prev);
   }
   function handleAdd() {
     navigation.navigate("SetNew");
@@ -35,14 +36,19 @@ const HomeScreen: FC<Props> = ({ navigation }) => {
     <SafeAreaView style={styles.AndriodSafeArea}>
       <View style={styles.topButtonContainer}>
         <Pressable onPress={handleEdit}>
-          <Text style={styles.topEditText}>Edit</Text>
+          <Text style={styles.topEditText}>{isEditable ? "Done" : "Edit"}</Text>
         </Pressable>
         <Pressable style={styles.topAddButton} onPress={handleAdd}>
           <Ionicons name="add" size={20} color="#f5b84e" />
         </Pressable>
       </View>
       {running.length ? (
-        <TimerList data={running} title="Timers" titleType="heading" />
+        <TimerList
+          data={running}
+          title="Timers"
+          titleType="heading"
+          isEditable={isEditable}
+        />
       ) : (
         <></>
       )}
@@ -51,6 +57,7 @@ const HomeScreen: FC<Props> = ({ navigation }) => {
           data={[...paused, ...completed]}
           title="Recent"
           titleType="normal"
+          isEditable={isEditable}
         />
       ) : (
         <></>
