@@ -9,7 +9,7 @@ import React, {
 import { Pressable, Text, View, StyleSheet } from "react-native";
 import { type iStatus } from "../types";
 import { Ionicons } from "@expo/vector-icons";
-import useTimerCountdown from "../hooks/useTimerCountdown";
+// import useTimerCountdown from "../hooks/useTimerCountdown";
 import { observer } from "@legendapp/state/react";
 import store$ from "../store/store";
 import COLORS from "../constants/color";
@@ -38,7 +38,12 @@ const TimerCard: FC<Props> = ({
 }) => {
   const [iconName, setIconName] = useState<"play" | "pause">("play");
   const [isSelected, setIsSlected] = useState<boolean>(false);
-  const { timeLeft, completedStatus } = useTimerCountdown(
+  // const { timeLeft, completedStatus } = useTimerCountdown(
+  //   endTime,
+  //   status,
+  //   remainingTime
+  // );
+  const { timeLeft, completedStatus } = store$.timerCountDown(
     endTime,
     status,
     remainingTime
@@ -103,9 +108,6 @@ const TimerCard: FC<Props> = ({
 
   function handlePlayPause() {
     if (!currentStatus) return;
-
-    // const newStatus: iStatus =
-    //   currentStatus === "running" ? "paused" : "running";
 
     const newStatus: iStatus =
       currentStatus === "paused" || currentStatus === "completed"

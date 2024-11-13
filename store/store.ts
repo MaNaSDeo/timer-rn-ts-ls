@@ -1,6 +1,7 @@
 import { observable } from "@legendapp/state";
 import { type Timer, type iStatus } from "../types";
 import { timersFakeData } from "../assets/fakedata";
+import { useState, useEffect } from "react";
 
 interface Store {
   timers: Timer[];
@@ -8,6 +9,11 @@ interface Store {
   playPauseTimer: (id: number, status: iStatus) => void;
   timerCompleted: (id: number) => void;
   deleteTimer: (ids: number[]) => void;
+  timerCountDown: (
+    endTime: Date,
+    status: iStatus,
+    remainingTime?: number
+  ) => { timeLeft: number; completedStatus: boolean };
 }
 
 // function addTimer(label: string, startTime: Date, duration: number) {
@@ -105,6 +111,46 @@ function timerCompleted(id: number) {
   });
 }
 
+function timerCountDown(
+  endTime: Date,
+  status: iStatus,
+  remainingTime?: number
+) {
+  const [timeLeft, setTimeLeft] = useState<number>(0);
+  const [isCompleted, setIsCompleted] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (status === "completed") {
+      setTimeLeft(0);
+      setIsCompleted(true);
+      return;
+    }
+
+    if (status === "paused") {
+      setTimeLeft(remainingTime || 0);
+      setIsCompleted(false);
+      return;
+    }
+
+    // For running timer, calculate from endTime
+    const updateTimeLeft = () => {
+      const remaining = Math.floor((endTime.getTime() - Date.now()) / 1000);
+      const newTimeLeft = Math.max(0, remaining);
+      setTimeLeft(newTimeLeft);
+      if (remaining <= 0) setIsCompleted(true);
+    };
+
+    //Initial value
+    updateTimeLeft();
+
+    if (status === "running") {
+      const interval = setInterval(updateTimeLeft, 1000);
+      return () => clearInterval(interval);
+    }
+  }, [status, endTime, remainingTime]);
+  return { timeLeft, completedStatus: isCompleted };
+}
+
 const store$ = observable<Store>({
   // timers: [],
   timers: timersFakeData,
@@ -112,6 +158,7 @@ const store$ = observable<Store>({
   playPauseTimer,
   deleteTimer,
   timerCompleted,
+  timerCountDown,
 });
 
 export default store$;
