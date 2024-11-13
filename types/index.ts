@@ -1,6 +1,6 @@
 export type Timer = {
   id: number;
-  label?: string;
+  label: string;
   startTime: Date; // When timer was first started
   endTime: Date; // Expected end time (will change when paused/resumed)
   duration: number; // Total duration in seconds

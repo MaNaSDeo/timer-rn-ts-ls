@@ -56,9 +56,10 @@ const TimerCard: FC<Props> = ({
   }, [completedStatus]);
 
   const formatedTime = useMemo(() => {
-    const hours = Math.floor(timeLeft / 3600);
-    const minutes = Math.floor((timeLeft % 3600) / 60);
-    const seconds = timeLeft % 60;
+    const time = status === "completed" ? duration : timeLeft;
+    const hours = Math.floor(time / 3600);
+    const minutes = Math.floor((time % 3600) / 60);
+    const seconds = time % 60;
 
     if (hours) {
       return `${hours.toString().padStart(2, "0")}:${minutes
@@ -69,7 +70,7 @@ const TimerCard: FC<Props> = ({
         .toString()
         .padStart(2, "0")}`;
     }
-  }, [timeLeft]);
+  }, [timeLeft, status]);
 
   const totalDuration = useMemo(() => {
     if (duration < 60) return `${duration} sec`;

@@ -11,9 +11,11 @@ import {
   type StackNavigationProp,
   type StackScreenProps,
 } from "@react-navigation/stack";
+import { observer } from "@legendapp/state/react";
 import COLORS from "../constants/color";
 import { type AppStackParamList } from "../types";
 import TimerInput from "../components/TimerInput";
+import store$ from "../store/store";
 
 interface Props {
   navigation: StackNavigationProp<AppStackParamList, "SetNew">;
@@ -21,12 +23,14 @@ interface Props {
 
 interface iPreTimer {
   time: string;
+  // onPress: (fixedDuration?: number) => void;
+  onPress: () => void;
 }
 
-const PreTimer: FC<iPreTimer> = ({ time }) => {
+const PreTimer: FC<iPreTimer> = ({ time, onPress }) => {
   return (
-    <Pressable style={styles.preTimer}>
-      <Text style={styles.preTimerText}>00:10:00</Text>
+    <Pressable style={styles.preTimer} onPress={onPress}>
+      <Text style={styles.preTimerText}>{time}</Text>
     </Pressable>
   );
 };
@@ -42,15 +46,30 @@ const TimerSetupScreen: FC<Props> = ({ navigation }) => {
     justifyContent: "space-between",
     alignItems: "center",
     height: 48,
-    // paddingLeft: 0,
   };
 
   function handleCancle() {
-    console.log("handleCancle");
+    setHour("");
+    setMin("");
+    setHour("");
+    setLabel("");
     navigation.navigate("Home");
   }
-  function handleAdd() {
+  function handleAdd(fixedDuration?: number) {
     console.log("handleAdd");
+    const duration =
+      fixedDuration ||
+      (parseInt(hour) || 0) * 3600 +
+        (parseInt(min) || 0) * 60 +
+        (parseInt(sec) || 0);
+
+    store$.addTimer({ label, startTime: new Date(), duration });
+
+    setHour("");
+    setMin("");
+    setHour("");
+    setLabel("");
+
     navigation.navigate("Home");
   }
 
@@ -61,7 +80,7 @@ const TimerSetupScreen: FC<Props> = ({ navigation }) => {
           <Text style={styles.topButtonText}>Cancel</Text>
         </Pressable>
         <Text style={styles.topTitleText}>Timer</Text>
-        <Pressable onPress={handleAdd}>
+        <Pressable onPress={() => handleAdd()}>
           <Text style={styles.topButtonText}>Start</Text>
         </Pressable>
       </View>
@@ -116,12 +135,12 @@ const TimerSetupScreen: FC<Props> = ({ navigation }) => {
         textTextAlign="left"
       />
       <View style={styles.preTimerContainer}>
-        <PreTimer time="00:10:00" />
-        <PreTimer time="00:15:00" />
-        <PreTimer time="00:30:00" />
+        <PreTimer time="00:10:00" onPress={() => handleAdd(600)} />
+        <PreTimer time="00:15:00" onPress={() => handleAdd(900)} />
+        <PreTimer time="00:30:00" onPress={() => handleAdd(1800)} />
       </View>
       <View style={styles.startButtonComponent}>
-        <Pressable style={styles.startButton} onPress={handleAdd}>
+        <Pressable style={styles.startButton} onPress={() => handleAdd()}>
           <Text style={styles.startButtonText}>Start</Text>
         </Pressable>
       </View>
@@ -129,7 +148,7 @@ const TimerSetupScreen: FC<Props> = ({ navigation }) => {
   );
 };
 
-export default TimerSetupScreen;
+export default observer(TimerSetupScreen);
 
 const styles = StyleSheet.create({
   AndriodSafeArea: {
