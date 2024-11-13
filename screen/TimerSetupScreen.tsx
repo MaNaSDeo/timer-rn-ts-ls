@@ -5,7 +5,6 @@ import {
   StyleSheet,
   Platform,
   StatusBar,
-  TextInput,
   Pressable,
 } from "react-native";
 import {
@@ -20,13 +19,23 @@ interface Props {
   navigation: StackNavigationProp<AppStackParamList, "SetNew">;
 }
 
+interface iPreTimer {
+  time: string;
+}
+
+const PreTimer: FC<iPreTimer> = ({ time }) => {
+  return (
+    <Pressable style={styles.preTimer}>
+      <Text style={styles.preTimerText}>00:10:00</Text>
+    </Pressable>
+  );
+};
+
 const TimerSetupScreen: FC<Props> = ({ navigation }) => {
   const [hour, setHour] = useState<string>("");
   const [min, setMin] = useState<string>("");
   const [sec, setSec] = useState<string>("");
   const [label, setLabel] = useState<string>("");
-
-  console.log("min", min);
 
   const labelCSS = {
     flexDirection: "row",
@@ -65,7 +74,7 @@ const TimerSetupScreen: FC<Props> = ({ navigation }) => {
           keyboardType="numeric"
           numberOfLines={1}
           maxLength={2}
-          placeholder="hour"
+          placeholder="HH"
           autoFocus={true}
           textTextAlign="center"
         />
@@ -77,7 +86,7 @@ const TimerSetupScreen: FC<Props> = ({ navigation }) => {
           keyboardType="numeric"
           numberOfLines={1}
           maxLength={2}
-          placeholder="min"
+          placeholder="MM"
           autoFocus={false}
           textTextAlign="center"
         />
@@ -89,7 +98,7 @@ const TimerSetupScreen: FC<Props> = ({ navigation }) => {
           keyboardType="numeric"
           numberOfLines={1}
           maxLength={2}
-          placeholder="sec"
+          placeholder="SS"
           autoFocus={false}
           textTextAlign="center"
         />
@@ -107,18 +116,12 @@ const TimerSetupScreen: FC<Props> = ({ navigation }) => {
         textTextAlign="left"
       />
       <View style={styles.preTimerContainer}>
-        <Pressable style={styles.preTimer}>
-          <Text style={styles.preTimerText}>00:10:00</Text>
-        </Pressable>
-        <Pressable style={styles.preTimer}>
-          <Text style={styles.preTimerText}>00:15:00</Text>
-        </Pressable>
-        <Pressable style={styles.preTimer}>
-          <Text style={styles.preTimerText}>00:30:00</Text>
-        </Pressable>
+        <PreTimer time="00:10:00" />
+        <PreTimer time="00:15:00" />
+        <PreTimer time="00:30:00" />
       </View>
       <View style={styles.startButtonComponent}>
-        <Pressable style={styles.startButton}>
+        <Pressable style={styles.startButton} onPress={handleAdd}>
           <Text style={styles.startButtonText}>Start</Text>
         </Pressable>
       </View>
@@ -135,7 +138,6 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 12,
     marginTop: 0,
-    // justifyContent: "space-between",
   },
   titleContainer: {
     flexDirection: "row",
@@ -158,19 +160,17 @@ const styles = StyleSheet.create({
   },
   preTimerContainer: {
     flexDirection: "row",
-    // justifyContent: "space-between",
-    // alignItems: "center",
-    // marginTop: 20,
+    justifyContent: "space-between",
+    alignItems: "center",
     marginVertical: 36,
   },
   preTimer: {
-    flex: 1,
+    width: 100,
     backgroundColor: "#494a49",
-    marginHorizontal: 8,
     aspectRatio: 1 / 1,
     justifyContent: "center",
     alignItems: "center",
-    borderRadius: 60,
+    borderRadius: 50,
   },
   preTimerText: {
     color: COLORS.appColor,
