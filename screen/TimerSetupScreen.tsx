@@ -56,7 +56,6 @@ const TimerSetupScreen: FC<Props> = ({ navigation }) => {
     navigation.navigate("Home");
   }
   function handleAdd(fixedDuration?: number) {
-    console.log("handleAdd");
     const duration =
       fixedDuration ||
       (parseInt(hour) || 0) * 3600 +

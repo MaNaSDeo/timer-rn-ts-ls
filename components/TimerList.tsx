@@ -1,4 +1,4 @@
-import React, { FC } from "react";
+import React, { FC, Dispatch, SetStateAction } from "react";
 import { View, FlatList, Text, StyleSheet } from "react-native";
 import { type Timer } from "../types";
 import TimerCard from "./TimerCard";
@@ -12,9 +12,17 @@ interface Props {
   title: string;
   titleType: "heading" | "normal";
   isEditable: boolean;
+  // setSelectedIds: (ids: number[]) => void;
+  setSelectedIds: Dispatch<SetStateAction<number[]>>;
 }
 
-const TimerList: FC<Props> = ({ data, title, titleType, isEditable }) => {
+const TimerList: FC<Props> = ({
+  data,
+  title,
+  titleType,
+  isEditable,
+  setSelectedIds,
+}) => {
   return (
     <View style={styles.container}>
       <Text
@@ -36,6 +44,7 @@ const TimerList: FC<Props> = ({ data, title, titleType, isEditable }) => {
             status={item.status}
             remainingTime={item.remainingTime || undefined}
             isEditable={isEditable}
+            setSelectedIds={setSelectedIds}
           />
         )}
         keyExtractor={(item) => item.id.toString()}

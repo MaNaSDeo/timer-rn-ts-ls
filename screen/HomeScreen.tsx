@@ -19,6 +19,7 @@ type Props = StackScreenProps<AppStackParamList, "Home">;
 
 const HomeScreen: FC<Props> = ({ navigation }) => {
   const [isEditable, setIsEditable] = useState<boolean>(false);
+  const [selectedIds, setSelectedIds] = useState<number[]>([]);
   const timers = store$.timers.get();
 
   const running = timers.filter((task) => task.status === "running");
@@ -26,16 +27,22 @@ const HomeScreen: FC<Props> = ({ navigation }) => {
   const completed = timers.filter((task) => task.status === "completed");
 
   function handleEdit() {
-    setIsEditable((prev) => !prev);
+    setSelectedIds([]);
+    setIsEditable(true);
   }
   function handleAdd() {
     navigation.navigate("SetNew");
+  }
+  function handleDone() {
+    store$.deleteTimer(selectedIds);
+    setSelectedIds([]);
+    setIsEditable(false);
   }
 
   return (
     <SafeAreaView style={styles.AndriodSafeArea}>
       <View style={styles.topButtonContainer}>
-        <Pressable onPress={handleEdit}>
+        <Pressable onPress={isEditable ? handleDone : handleEdit}>
           <Text style={styles.topEditText}>{isEditable ? "Done" : "Edit"}</Text>
         </Pressable>
         <Pressable style={styles.topAddButton} onPress={handleAdd}>
@@ -48,6 +55,7 @@ const HomeScreen: FC<Props> = ({ navigation }) => {
           title="Timers"
           titleType="heading"
           isEditable={isEditable}
+          setSelectedIds={setSelectedIds}
         />
       ) : (
         <></>
@@ -58,6 +66,7 @@ const HomeScreen: FC<Props> = ({ navigation }) => {
           title="Recent"
           titleType="normal"
           isEditable={isEditable}
+          setSelectedIds={setSelectedIds}
         />
       ) : (
         <></>

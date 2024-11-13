@@ -1,10 +1,18 @@
-import React, { FC, useEffect, useMemo, useState } from "react";
+import React, {
+  FC,
+  useEffect,
+  useMemo,
+  useState,
+  Dispatch,
+  SetStateAction,
+} from "react";
 import { Pressable, Text, View, StyleSheet } from "react-native";
 import { type iStatus } from "../types";
 import { Ionicons } from "@expo/vector-icons";
 import useTimerCountdown from "../hooks/useTimerCountdown";
 import { observer } from "@legendapp/state/react";
 import store$ from "../store/store";
+import COLORS from "../constants/color";
 
 interface Props {
   id: number;
@@ -14,6 +22,8 @@ interface Props {
   duration: number;
   remainingTime?: number;
   isEditable: boolean;
+  // setSelectedIds: (ids: number[]) => void;
+  setSelectedIds: Dispatch<SetStateAction<number[]>>;
 }
 
 const TimerCard: FC<Props> = ({
@@ -24,8 +34,10 @@ const TimerCard: FC<Props> = ({
   duration,
   remainingTime,
   isEditable,
+  setSelectedIds,
 }) => {
   const [iconName, setIconName] = useState<"play" | "pause">("play");
+  const [isSelected, setIsSlected] = useState<boolean>(false);
   const { timeLeft, completedStatus } = useTimerCountdown(
     endTime,
     status,
@@ -103,12 +115,25 @@ const TimerCard: FC<Props> = ({
     store$.playPauseTimer(id, newStatus);
   }
 
+  function handleEdit() {
+    setIsSlected((prev) => !prev);
+    setSelectedIds((prev) =>
+      prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]
+    );
+  }
+
   return (
     <View style={styles.container}>
       {isEditable ? (
         <View style={styles.editBtnContainer}>
-          <Pressable style={styles.editButton}>
-            <Ionicons name="remove" color={"white"} size={18} />
+          <Pressable
+            style={[
+              styles.editButton,
+              isSelected ? null : styles.selectedEditButton,
+            ]}
+            onPress={handleEdit}
+          >
+            <Ionicons name="remove" color={"white"} size={16} />
           </Pressable>
         </View>
       ) : (
@@ -192,5 +217,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     marginRight: 12,
+  },
+  selectedEditButton: {
+    backgroundColor: COLORS.black,
+    borderColor: COLORS.white,
+    borderWidth: 1,
   },
 });

@@ -110,8 +110,10 @@ function playPauseTimer(id: number, newStatus: iStatus) {
 
 function deleteTimer(ids: number[]) {
   // Will find the timer with just the id and will filter it out.
-  // store$.timers.set((prev) => prev.filter((task) => task.id !== id));
-  console.log("ids", ids);
+  // store$.timers.set((prev) => prev.filter((task) => !ids.includes(task.id)));
+
+  const idSet = new Set(ids);
+  store$.timers.set((prev) => prev.filter((task) => !idSet.has(task.id)));
 }
 
 function getTimeRemaining(id: number): number {
