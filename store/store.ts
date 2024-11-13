@@ -5,11 +5,9 @@ import { timersFakeData } from "../assets/fakedata";
 interface Store {
   timers: Timer[];
   addTimer: (timer: Omit<Timer, "id" | "endTime" | "status">) => void;
-  editTimer: (timer: Timer) => void;
   playPauseTimer: (id: number, status: iStatus) => void;
   timerCompleted: (id: number) => void;
   deleteTimer: (ids: number[]) => void;
-  getTimeRemaining: (id: number) => number;
 }
 
 // function addTimer(label: string, startTime: Date, duration: number) {
@@ -32,23 +30,6 @@ function addTimer(timer: Omit<Timer, "id" | "endTime" | "status">) {
     status: "running",
   };
   store$.timers.push(newTimer);
-}
-
-function editTimer(updatedTimer: Timer) {
-  /**
-   * Will pass everything in the timer data, with updating the edited data/
-   */
-  // const index = store$.timers.peek().findIndex((t) => t.id === updatedTimer.id);
-  // if (index !== -1) {
-  // }
-  store$.timers.set((prev) => {
-    return prev.map((timer) => {
-      if (timer.id === updatedTimer.id) {
-        return updatedTimer;
-      }
-      return timer;
-    });
-  });
 }
 
 function playPauseTimer(id: number, newStatus: iStatus) {
@@ -116,18 +97,6 @@ function deleteTimer(ids: number[]) {
   store$.timers.set((prev) => prev.filter((task) => !idSet.has(task.id)));
 }
 
-function getTimeRemaining(id: number): number {
-  const timer: Timer | undefined = store$.timers
-    .peek()
-    .find((t) => t.id === id);
-  if (!timer) return 0;
-  if (timer.status === "completed") return 0;
-  if (timer.status === "paused") return timer.remainingTime || 0;
-
-  const remaining = Math.floor((timer.endTime.getTime() - Date.now()) / 1000);
-  return Math.max(0, remaining);
-}
-
 function timerCompleted(id: number) {
   store$.timers.set((prev) => {
     return prev.map((task) => {
@@ -140,11 +109,11 @@ const store$ = observable<Store>({
   // timers: [],
   timers: timersFakeData,
   addTimer,
-  editTimer,
   playPauseTimer,
   deleteTimer,
-  getTimeRemaining,
   timerCompleted,
 });
 
 export default store$;
+
+//action,
