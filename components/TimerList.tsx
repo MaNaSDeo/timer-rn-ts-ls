@@ -45,7 +45,9 @@ const TimerList: FC<Props> = ({ data, title, titleType }) => {
 export default TimerList;
 
 const styles = StyleSheet.create({
-  container: {},
+  container: {
+    marginBottom: 16,
+  },
   heading: {
     color: "#fff",
     paddingHorizontal: 12,

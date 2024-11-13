@@ -19,7 +19,11 @@ export default function App() {
             component={HomeScreen}
             options={{ headerShown: false }}
           />
-          <AppStack.Screen name="SetNew" component={TimerSetupScreen} />
+          <AppStack.Screen
+            name="SetNew"
+            component={TimerSetupScreen}
+            options={{ headerShown: false }}
+          />
         </AppStack.Navigator>
       </NavigationContainer>
     </>
