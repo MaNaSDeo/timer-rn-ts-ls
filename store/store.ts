@@ -57,6 +57,7 @@ function playPauseTimer(id: number, newStatus: iStatus) {
    * Will call this whenever the start or pause button is pressed, and will update pausedAt.
    * Will call again when the the timer will end and update the the staus as 'completed'
    */
+
   const now = new Date();
   store$.timers.set((prevTimers) => {
     return prevTimers.map((timer) => {
@@ -86,6 +87,14 @@ function playPauseTimer(id: number, newStatus: iStatus) {
               endTime: new Date(now.getTime() + timer.remainingTime * 1000),
               pausedAt: undefined,
               remainingTime: undefined,
+            };
+          }
+          if (timer.status === "completed") {
+            return {
+              ...timer,
+              status: "running",
+              endTime: new Date(now.getTime() + timer.duration * 1000),
+              startTime: now,
             };
           }
           return timer;

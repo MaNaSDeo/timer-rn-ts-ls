@@ -23,9 +23,7 @@ const TimerCard: FC<Props> = ({
   duration,
   remainingTime,
 }) => {
-  const [iconName, setIconName] = useState<"play" | "pause" | "checkmark">(
-    "play"
-  );
+  const [iconName, setIconName] = useState<"play" | "pause">("play");
   const { timeLeft, completedStatus } = useTimerCountdown(
     endTime,
     status,
@@ -46,7 +44,7 @@ const TimerCard: FC<Props> = ({
         setIconName("pause");
         break;
       case "completed":
-        setIconName("checkmark");
+        setIconName("play");
         break;
     }
   }, [status, id, completedStatus]);
@@ -92,8 +90,13 @@ const TimerCard: FC<Props> = ({
   function handlePlayPause() {
     if (!currentStatus) return;
 
+    // const newStatus: iStatus =
+    //   currentStatus === "running" ? "paused" : "running";
+
     const newStatus: iStatus =
-      currentStatus === "running" ? "paused" : "running";
+      currentStatus === "paused" || currentStatus === "completed"
+        ? "running"
+        : "paused";
 
     store$.playPauseTimer(id, newStatus);
   }
@@ -109,14 +112,14 @@ const TimerCard: FC<Props> = ({
       <Pressable
         style={[
           styles.button,
-          iconName === "checkmark" ? styles.completedBtn : null,
+          status === "completed" ? styles.completedBtn : null,
         ]}
         onPress={handlePlayPause}
       >
         <Ionicons
           name={iconName}
           size={30}
-          color={iconName === "checkmark" ? "#02fa07" : "#f5b84e"}
+          color={status === "completed" ? "#02fa07" : "#f5b84e"}
         />
       </Pressable>
     </View>
@@ -162,6 +165,7 @@ const styles = StyleSheet.create({
     borderColor: "#f5b84e",
   },
   completedBtn: {
+    borderWidth: 0,
     backgroundColor: "#065207",
     borderColor: "#000",
   },
